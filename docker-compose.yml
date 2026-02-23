@@ -1,0 +1,23 @@
+services:
+  voipshim:
+    build: .
+    container_name: voipshim
+    restart: unless-stopped
+    network_mode: host          # Required — SIP/RTP needs direct network access
+    environment:
+      # ── Required ──────────────────────────────────────────────────
+      # UniFi Talk server address (IP or hostname)
+      UNIFI_SIP_SERVER: "192.168.x.y"
+      # SIP extension credentials created on UniFi Talk
+      UNIFI_SIP_USER: "0001"
+      UNIFI_SIP_PASS: "yourPasswordHere"
+      # Home Assistant address (IP or hostname)
+      HA_HOST: "192.168.z.t"
+
+      # ── Optional ──────────────────────────────────────────────────
+      # UNIFI_SIP_PORT: "5060"      # UniFi Talk SIP port
+      # HA_SIP_PORT: "5060"         # Home Assistant VOIP SIP port
+      # LOCAL_SIP_PORT: "5080"      # Port the shim binds for SIP
+      # LOG_LEVEL: "INFO"           # DEBUG, INFO, WARNING, ERROR
+      # PJSIP_LOG_LEVEL: "3"       # PJSIP internal log verbosity (0-6)
+      # MAX_CALLS: "4"             # Maximum concurrent bridged calls
