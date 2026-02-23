@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-s9t-voipshim — UniFi Talk ↔ Home Assistant VOIP bridge.
+ha-voipshim — UniFi Talk ↔ Home Assistant VOIP bridge.
 
 Registers as a SIP extension on a UniFi Talk server, auto-answers
 incoming calls, and bridges audio to Home Assistant's VOIP integration
@@ -251,7 +251,7 @@ def main() -> None:
     ep_cfg.logConfig.level = PJSIP_LOG_LEVEL
     ep_cfg.logConfig.consoleLevel = PJSIP_LOG_LEVEL
     ep_cfg.uaConfig.maxCalls = MAX_CALLS
-    ep_cfg.uaConfig.userAgent = "s9t-voipshim/1.0"
+    ep_cfg.uaConfig.userAgent = "ha-voipshim/1.0"
     # Single worker thread — callbacks are simple and non-blocking
     ep_cfg.uaConfig.threadCnt = 1
     # No echo cancellation or VAD needed for a call bridge

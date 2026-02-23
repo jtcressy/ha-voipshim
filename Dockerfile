@@ -1,6 +1,6 @@
 FROM python:3.12-slim-bookworm
 
-LABEL org.opencontainers.image.source="https://github.com/zacs/s9t-voipshim"
+LABEL org.opencontainers.image.source="https://github.com/zacs/ha-voipshim"
 LABEL org.opencontainers.image.description="UniFi Talk to Home Assistant VOIP bridge"
 
 ARG PJSIP_VERSION=2.14.1
