@@ -1,6 +1,6 @@
 services:
   voipshim:
-    build: .
+    image: ghcr.io/zacs/ha-voipshim:latest
     container_name: voipshim
     restart: unless-stopped
     network_mode: host          # Required — SIP/RTP needs direct network access

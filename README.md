@@ -26,7 +26,7 @@ UniFi Talk server              voipshim                 Home Assistant
        │◄─── 200 OK ──────────────│                          │
        │──── ACK ────────────────►│──── ACK ────────────────►│
        │                          │                          │
-       │◄════ RTP audio ════════►│◄══════ RTP audio ════════►│
+       │◄════ RTP audio ══════════►│◄═════ RTP audio ═══════►│
        │       (bridged via PJSIP conference bridge)         │
        │                          │                          │
        │──── BYE ────────────────►│──── BYE ────────────────►│
@@ -66,26 +66,33 @@ You need to create an extension that the shim will register as. The exact steps 
 
 ### 3. Deploy the Shim
 
-```bash
-git clone https://github.com/zacs/ha-voipshim.git
-cd ha-voipshim
+1. Create a Docker compose file like the below.
 
-# Edit docker-compose.yml with your values:
-#   UNIFI_SIP_SERVER  — your UniFi Talk server IP
-#   UNIFI_SIP_USER    — the extension number from step 1
-#   UNIFI_SIP_PASS    — the SIP password from step 1
-#   HA_HOST           — your Home Assistant IP
-
-docker compose up -d
+```yaml
+services:
+  voipshim:
+    image: ghcr.io/zacs/ha-voipshim:latest
+    container_name: voipshim
+    restart: unless-stopped
+    network_mode: host     # Required — SIP/RTP needs direct network access
+    environment:
+      # UniFi Talk server address (IP or hostname)
+      UNIFI_SIP_SERVER: "192.168.x.y"
+      # SIP extension credentials created on UniFi Talk
+      UNIFI_SIP_USER: "0001"
+      UNIFI_SIP_PASS: "yourPasswordHere"
+      # Home Assistant address (IP or hostname)
+      HA_HOST: "192.168.z.t"
 ```
 
-Check that it registered:
+2. Start it up:
 
-```bash
-docker compose logs -f voipshim
+```
+docker compose up -d && docker compose logs -f
 ```
 
-You should see:
+3. You should see:
+
 ```
 voipshim starting
   UniFi Talk : 192.168.1.1:5060  user=200
