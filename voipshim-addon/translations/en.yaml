@@ -1,0 +1,2 @@
+name: "VOIP Shim (UniFi Talk -> Home Assistant)"
+description: "Bridge UniFi Talk SIP calls to Home Assistant Voice over IP"

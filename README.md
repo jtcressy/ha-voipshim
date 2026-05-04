@@ -193,3 +193,13 @@ It is infrastructure glue — nothing more.
 ## License
 
 MIT
+
+## Home Assistant OS Custom Add-on
+
+This repository now also includes a HA OS add-on at `voipshim-addon/` so you can install from a custom add-on repository instead of running standalone Docker.
+
+- Add-on repo metadata: `repository.yaml`
+- Add-on definition/build/runtime: `voipshim-addon/config.yaml`, `voipshim-addon/Dockerfile`, `voipshim-addon/run.sh`
+- Add-on docs: `voipshim-addon/README.md`
+
+Standalone Docker usage remains supported and unchanged.
