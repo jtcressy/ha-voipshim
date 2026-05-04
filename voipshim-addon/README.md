@@ -11,6 +11,8 @@ This add-on runs `ha-voipshim` inside Home Assistant OS and bridges inbound UniF
 4. Find **VOIP Shim (UniFi Talk -> Home Assistant)** and click **Install**.
 5. Configure options and start the add-on.
 
+HA OS add-on builds currently support `aarch64` and `amd64`.
+
 ## Example add-on configuration
 
 ```yaml
