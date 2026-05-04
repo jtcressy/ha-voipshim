@@ -1,5 +1,4 @@
-ARG BUILD_ARCH=amd64
-FROM ghcr.io/home-assistant/${BUILD_ARCH}-base-debian:bookworm
+FROM ghcr.io/home-assistant/base-debian:bookworm
 
 ARG PJSIP_VERSION=2.14.1
 
