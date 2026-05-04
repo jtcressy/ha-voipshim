@@ -130,6 +130,8 @@ If the shim runs on the **same host** as Home Assistant, their SIP ports must di
 
 Hostnames in `HA_HOST` are resolved to IPv4 before dialing Home Assistant because the VoIP integration expects an IPv4 address in the SIP request URI. For the HA OS add-on, use `127.0.0.1` or Home Assistant's LAN IPv4 address rather than `homeassistant.local`.
 
+The shim reserves two RTP blocks from `RTP_PORT_START`: `RTP_PORT_START` through `RTP_PORT_START + 199` for UniFi, and `RTP_PORT_START + 200` through `RTP_PORT_START + 399` for Home Assistant.
+
 ## Verifying Audio Flow
 
 1. Set `LOG_LEVEL: "DEBUG"` and `PJSIP_LOG_LEVEL: "5"` in docker-compose.yml, then restart.
