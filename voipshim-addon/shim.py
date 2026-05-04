@@ -16,9 +16,11 @@ Call flow:
 
 from __future__ import annotations
 
+import ipaddress
 import logging
 import os
 import signal
+import socket
 import sys
 import threading
 
@@ -55,6 +57,38 @@ HEALTH_FILE = "/tmp/voipshim-healthy"
 log = logging.getLogger("voipshim")
 
 # ── Helpers ────────────────────────────────────────────────────────────────
+
+
+def _resolve_ipv4(host: str) -> str:
+    """Return an IPv4 address for *host*, required by HA's VoIP SIP parser."""
+    try:
+        ipaddress.IPv4Address(host)
+        return host
+    except ValueError:
+        pass
+
+    try:
+        infos = socket.getaddrinfo(
+            host, None, family=socket.AF_INET, type=socket.SOCK_DGRAM
+        )
+    except OSError as err:
+        print(
+            f"FATAL: HA_HOST {host!r} must be an IPv4 address or resolve to one: {err}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    if not infos:
+        print(
+            f"FATAL: HA_HOST {host!r} did not resolve to an IPv4 address",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    return infos[0][4][0]
+
+
+HA_SIP_HOST = _resolve_ipv4(HA_HOST)
 
 
 def _active_audio(call: pj.Call) -> pj.AudioMedia | None:
@@ -161,7 +195,7 @@ class UniFiCall(pj.Call):
 
     def dial_ha(self) -> None:
         """Place outgoing call to Home Assistant."""
-        uri = f"sip:ha@{HA_HOST}:{HA_PORT}"
+        uri = f"sip:ha@{HA_SIP_HOST}:{HA_PORT}"
         log.info("Dialling Home Assistant at %s", uri)
         self.ha_call = HACall(self.ha_account, self)
         prm = pj.CallOpParam(True)
@@ -239,7 +273,10 @@ def main() -> None:
 
     log.info("voipshim starting")
     log.info("  UniFi Talk : %s:%d  user=%s", UNIFI_HOST, UNIFI_PORT, UNIFI_USER)
-    log.info("  Home Asst  : %s:%d", HA_HOST, HA_PORT)
+    if HA_SIP_HOST == HA_HOST:
+        log.info("  Home Asst  : %s:%d", HA_HOST, HA_PORT)
+    else:
+        log.info("  Home Asst  : %s -> %s:%d", HA_HOST, HA_SIP_HOST, HA_PORT)
     log.info("  Local SIP  : port %d", LOCAL_SIP_PORT)
 
     # ── PJSUA2 endpoint ──────────────────────────────────────────────
@@ -278,7 +315,7 @@ def main() -> None:
     # ── HA account (local, no registration) ──────────────────────────
 
     ha_cfg = pj.AccountConfig()
-    ha_cfg.idUri = f"sip:voipshim@{HA_HOST}"
+    ha_cfg.idUri = f"sip:voipshim@{HA_SIP_HOST}"
     ha_cfg.regConfig.registerOnAdd = False
     # Bind to our UDP transport so outgoing INVITEs use it
     ha_cfg.sipConfig.transportId = tp_id
