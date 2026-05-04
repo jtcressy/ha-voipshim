@@ -160,7 +160,7 @@ docker inspect --format='{{.State.Health.Status}}' voipshim
 
 ## Architecture Notes
 
-- **Single Python file** (`shim.py`, ~230 lines) built on PJSIP/pjsua2.
+- **Single Python implementation** (`voipshim-addon/shim.py`) built on PJSIP/pjsua2.
 - **PJSIP** handles all SIP signaling, codec negotiation, RTP transport, and audio bridging.
 - **Opus + G.711** codecs are built-in — PJSIP negotiates the best match with each peer.
 - **Null audio device** — no sound hardware needed; the conference bridge operates entirely in software.
@@ -199,7 +199,8 @@ MIT
 This repository now also includes a HA OS add-on at `voipshim-addon/` so you can install from a custom add-on repository instead of running standalone Docker.
 
 - Add-on repo metadata: `repository.yaml`
-- Add-on definition/build/runtime: `voipshim-addon/config.yaml`, `voipshim-addon/Dockerfile`, `voipshim-addon/run.sh`
+- Add-on definition/build/runtime: `voipshim-addon/config.yaml`, `voipshim-addon/Dockerfile`, `voipshim-addon/run.sh`, `voipshim-addon/shim.py`
 - Add-on docs: `voipshim-addon/README.md`
 
 Standalone Docker usage remains supported and unchanged.
+Local `python shim.py` usage remains supported through a compatibility wrapper.

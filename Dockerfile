@@ -50,7 +50,7 @@ RUN set -ex \
         build-essential swig wget ca-certificates pkg-config libopus-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY shim.py /app/shim.py
+COPY voipshim-addon/shim.py /app/shim.py
 WORKDIR /app
 
 HEALTHCHECK --interval=60s --timeout=5s --start-period=30s --retries=3 \

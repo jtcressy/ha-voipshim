@@ -1,5 +1,5 @@
-ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base-debian:bookworm
-FROM ${BUILD_FROM}
+ARG BUILD_ARCH=amd64
+FROM ghcr.io/home-assistant/${BUILD_ARCH}-base-debian:bookworm
 
 ARG PJSIP_VERSION=2.14.1
 
@@ -41,7 +41,7 @@ RUN set -ex \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
 COPY shim.py /app/shim.py
-COPY voipshim-addon/run.sh /run.sh
+COPY run.sh /run.sh
 RUN chmod +x /run.sh
 
 CMD [ "/run.sh" ]
