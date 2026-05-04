@@ -52,6 +52,7 @@ Add-on options are mapped to the same environment variables used by standalone D
 - Home Assistant VoIP defaults to SIP UDP `5060`.
 - Hostnames in `ha_host` are resolved to IPv4 before dialing because Home Assistant's VoIP SIP parser expects an IPv4 address in the request URI.
 - For the HA OS add-on, `127.0.0.1` is recommended because the shim and Home Assistant share host networking.
+- `rtp_port_start` reserves two 200-port ranges: one for the UniFi leg and one for the Home Assistant leg.
 - This shim defaults to local SIP UDP `5080`, avoiding conflict when both run on the same HA host.
 - UniFi Talk typically uses SIP UDP `5060` as the registrar endpoint.
 

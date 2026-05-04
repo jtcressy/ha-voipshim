@@ -48,6 +48,9 @@ HA_PORT = int(os.environ.get("HA_SIP_PORT", "5060"))
 
 LOCAL_SIP_PORT = int(os.environ.get("LOCAL_SIP_PORT", "5080"))
 RTP_PORT_START = int(os.environ.get("RTP_PORT_START", "10000"))
+RTP_PORT_BLOCK = 200
+UNIFI_RTP_PORT_START = RTP_PORT_START
+HA_RTP_PORT_START = RTP_PORT_START + RTP_PORT_BLOCK
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 PJSIP_LOG_LEVEL = int(os.environ.get("PJSIP_LOG_LEVEL", "3"))
 MAX_CALLS = int(os.environ.get("MAX_CALLS", "4"))
@@ -278,6 +281,13 @@ def main() -> None:
     else:
         log.info("  Home Asst  : %s -> %s:%d", HA_HOST, HA_SIP_HOST, HA_PORT)
     log.info("  Local SIP  : port %d", LOCAL_SIP_PORT)
+    log.info(
+        "  RTP ranges : UniFi %d-%d, HA %d-%d",
+        UNIFI_RTP_PORT_START,
+        UNIFI_RTP_PORT_START + RTP_PORT_BLOCK - 1,
+        HA_RTP_PORT_START,
+        HA_RTP_PORT_START + RTP_PORT_BLOCK - 1,
+    )
 
     # ── PJSUA2 endpoint ──────────────────────────────────────────────
 
@@ -295,7 +305,7 @@ def main() -> None:
     ep_cfg.medConfig.noVad = True
     ep_cfg.medConfig.ecTailLen = 0
     # RTP port range — avoid low ports that may conflict
-    ep_cfg.medConfig.portRange = 200
+    ep_cfg.medConfig.portRange = RTP_PORT_BLOCK * 2
 
     ep.libInit(ep_cfg)
 
@@ -319,9 +329,10 @@ def main() -> None:
     ha_cfg.regConfig.registerOnAdd = False
     # Bind to our UDP transport so outgoing INVITEs use it
     ha_cfg.sipConfig.transportId = tp_id
-    # Use high RTP ports to avoid conflicts
-    ha_cfg.mediaConfig.transportConfig.port = RTP_PORT_START
-    ha_cfg.mediaConfig.transportConfig.portRange = 200
+    # Keep the two legs on distinct RTP ranges so simultaneous media transports
+    # do not try to bind the same local port.
+    ha_cfg.mediaConfig.transportConfig.port = HA_RTP_PORT_START
+    ha_cfg.mediaConfig.transportConfig.portRange = RTP_PORT_BLOCK
     ha_acc = HALocalAccount()
     ha_acc.create(ha_cfg)
 
@@ -332,9 +343,8 @@ def main() -> None:
     uni_cfg.regConfig.registrarUri = f"sip:{UNIFI_HOST}:{UNIFI_PORT}"
     uni_cfg.regConfig.timeoutSec = 300
     uni_cfg.regConfig.retryIntervalSec = 30
-    # Use high RTP ports to avoid conflicts
-    uni_cfg.mediaConfig.transportConfig.port = RTP_PORT_START
-    uni_cfg.mediaConfig.transportConfig.portRange = 200
+    uni_cfg.mediaConfig.transportConfig.port = UNIFI_RTP_PORT_START
+    uni_cfg.mediaConfig.transportConfig.portRange = RTP_PORT_BLOCK
 
     cred = pj.AuthCredInfo("digest", "*", UNIFI_USER, 0, UNIFI_PASS)
     uni_cfg.sipConfig.authCreds.append(cred)

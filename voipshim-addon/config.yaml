@@ -1,5 +1,5 @@
 name: "VOIP Shim (UniFi Talk -> Home Assistant)"
-version: "0.1.1"
+version: "0.1.2"
 slug: "voipshim"
 description: "Bridge UniFi Talk SIP calls into Home Assistant Voice over IP"
 url: "https://github.com/zacs/ha-voipshim"
