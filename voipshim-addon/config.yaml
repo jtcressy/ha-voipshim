@@ -1,0 +1,41 @@
+name: "VOIP Shim (UniFi Talk -> Home Assistant)"
+version: "0.1.0"
+slug: "voipshim"
+description: "Bridge UniFi Talk SIP calls into Home Assistant Voice over IP"
+url: "https://github.com/zacs/ha-voipshim"
+arch:
+  - aarch64
+  - amd64
+  - armv7
+  - i386
+  - armhf
+startup: services
+boot: auto
+init: false
+host_network: true
+options:
+  unifi_sip_server: "192.168.1.10"
+  unifi_sip_user: "200"
+  unifi_sip_pass: "change-me"
+  ha_host: "homeassistant.local"
+  unifi_sip_port: 5060
+  ha_sip_port: 5060
+  local_sip_port: 5080
+  rtp_port_start: 10000
+  log_level: "INFO"
+  pjsip_log_level: 3
+  max_calls: 4
+  debug: false
+schema:
+  unifi_sip_server: str
+  unifi_sip_user: str
+  unifi_sip_pass: password
+  ha_host: str
+  unifi_sip_port: port
+  ha_sip_port: port
+  local_sip_port: port
+  rtp_port_start: port
+  log_level: list(DEBUG|INFO|WARNING|ERROR)
+  pjsip_log_level: "int(0,6)"
+  max_calls: "int(1,32)"
+  debug: bool
