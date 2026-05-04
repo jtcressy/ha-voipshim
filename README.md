@@ -116,7 +116,7 @@ All settings are environment variables in `docker-compose.yml`:
 | `UNIFI_SIP_SERVER` | **Yes** | — | UniFi Talk server IP or hostname |
 | `UNIFI_SIP_USER` | **Yes** | — | SIP extension username/number |
 | `UNIFI_SIP_PASS` | **Yes** | — | SIP extension password |
-| `HA_HOST` | **Yes** | — | Home Assistant IP or hostname |
+| `HA_HOST` | **Yes** | — | Home Assistant IPv4 address or DNS hostname that resolves to IPv4 |
 | `UNIFI_SIP_PORT` | No | `5060` | UniFi Talk SIP port |
 | `HA_SIP_PORT` | No | `5060` | Home Assistant VOIP SIP port |
 | `LOCAL_SIP_PORT` | No | `5080` | Local SIP port the shim binds to |
@@ -127,6 +127,8 @@ All settings are environment variables in `docker-compose.yml`:
 ### Port Conflicts
 
 If the shim runs on the **same host** as Home Assistant, their SIP ports must differ. The shim defaults to port `5080`; HA defaults to `5060`. No change needed in the default configuration.
+
+Hostnames in `HA_HOST` are resolved to IPv4 before dialing Home Assistant because the VoIP integration expects an IPv4 address in the SIP request URI. For the HA OS add-on, use `127.0.0.1` or Home Assistant's LAN IPv4 address rather than `homeassistant.local`.
 
 ## Verifying Audio Flow
 
